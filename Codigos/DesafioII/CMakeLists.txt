@@ -5,7 +5,14 @@ project(DesafioII LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(DesafioII main.cpp)
+add_executable(DesafioII main.cpp
+    Lista.h
+    Foto.cpp
+    Foto.h
+    Usuario.cpp
+    Usuario.h
+
+)
 
 include(GNUInstallDirs)
 install(TARGETS DesafioII
