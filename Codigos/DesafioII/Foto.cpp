@@ -1,35 +1,77 @@
-#ifndef FOTO_H
-#define FOTO_H
+#include "Foto.h"
 
-#include <string>
-using namespace std;
-
-class Foto
+Foto::Foto()
 {
-private:
-    string fechaCaptura;
-    unsigned int tamanoBytes;
-    string rutaArchivo;
-    int conteoLikes;
+    fechaCaptura = "";
+    tamanoBytes = 0;
+    rutaArchivo = "";
+    conteoLikes = 0;
+}
 
-public:
-    Foto();
-    Foto(const Foto& otra);
-    Foto(string fecha, unsigned int tamano, string ruta);
+Foto::Foto(const Foto& otra)
+{
+    fechaCaptura = otra.fechaCaptura;
+    tamanoBytes = otra.tamanoBytes;
+    rutaArchivo = otra.rutaArchivo;
+    conteoLikes = otra.conteoLikes;
+}
 
-    ~Foto();
+Foto::Foto(string fecha, unsigned int tamano, string ruta)
+{
+    fechaCaptura = fecha;
+    tamanoBytes = tamano;
+    rutaArchivo = ruta;
+    conteoLikes = 0;
+}
 
-    void darLike();
-    void quitarLike();
+Foto::~Foto()
+{
+}
 
-    string getRutaArchivo() const;
-    string getFechaCaptura() const;
-    unsigned int getTamanoBytes() const;
-    int getConteoLikes() const;
+void Foto::darLike()
+{
+    conteoLikes++;
+}
 
-    void setFechaCaptura(string fecha);
-    void setTamanoBytes(unsigned int tamano);
-    void setRutaArchivo(string ruta);
-};
+void Foto::quitarLike()
+{
+    if (conteoLikes > 0)
+    {
+        conteoLikes--;
+    }
+}
 
-#endif
+string Foto::getRutaArchivo() const
+{
+    return rutaArchivo;
+}
+
+string Foto::getFechaCaptura() const
+{
+    return fechaCaptura;
+}
+
+unsigned int Foto::getTamanoBytes() const
+{
+    return tamanoBytes;
+}
+
+int Foto::getConteoLikes() const
+{
+    return conteoLikes;
+}
+
+void Foto::setFechaCaptura(string fecha)
+{
+    fechaCaptura = fecha;
+}
+
+void Foto::setTamanoBytes(unsigned int tamano)
+{
+    tamanoBytes = tamano;
+}
+
+void Foto::setRutaArchivo(string ruta)
+{
+    rutaArchivo = ruta;
+}

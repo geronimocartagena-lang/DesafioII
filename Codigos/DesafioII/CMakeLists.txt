@@ -17,6 +17,8 @@ add_executable(DesafioII main.cpp
     Mensaje.h
     Manejorecursos.cpp
     Manejorecursos.h
+    Redsocial.cpp
+    Redsocial.h
 
 )
 

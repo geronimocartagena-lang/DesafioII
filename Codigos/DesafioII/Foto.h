@@ -16,7 +16,6 @@ public:
     Foto();
     Foto(const Foto& otra);
     Foto(string fecha, unsigned int tamano, string ruta);
-
     ~Foto();
 
     void darLike();
