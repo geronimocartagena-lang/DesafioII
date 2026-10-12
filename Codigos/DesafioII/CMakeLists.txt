@@ -11,6 +11,12 @@ add_executable(DesafioII main.cpp
     Foto.h
     Usuario.cpp
     Usuario.h
+    Album.cpp
+    Album.h
+    Mensaje.cpp
+    Mensaje.h
+    Manejorecursos.cpp
+    Manejorecursos.h
 
 )
 
