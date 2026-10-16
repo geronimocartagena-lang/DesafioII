@@ -8,7 +8,6 @@
 
 using namespace std;
 
-// Prototipos de submenús LISTA ENLASADA
 void menuAdministrarAmistades(Redsocial& red, Usuario* usuario);
 void menuVisitarPerfilAmigo(Redsocial& red, Usuario* usuario);
 void menuVerSugerencias(Redsocial& red, Usuario* usuario);
@@ -16,10 +15,9 @@ void menuAdministrarMensajes(Redsocial& red, Usuario* usuario);
 
 void mostrarPantallaPrincipal(Redsocial& red, Usuario* usuario) {
     cout << "\n========================================================" << endl;
-    // Muestra 3 mejores amigos (fotos de perfil) con prioridad por coincidencias
     red.mostrarMejoresAmigos();
 
-    cout << "\nBienvenido a UdeaBook // " << usuario->getUsername() << endl;
+    cout << "\nBienvenido a UdeaBook :D // " << usuario->getUsername() << endl;
     cout << "========================================================" << endl;
     cout << "Menú de opciones:" << endl;
     cout << "  1.- Administrar amistades" << endl;
@@ -35,11 +33,8 @@ void mostrarPantallaPrincipal(Redsocial& red, Usuario* usuario) {
 int main() {
     Redsocial red;
 
-    // Carga de los 1000 usuarios y relaciones desde usuarios.txt al iniciar
-    cout << "=== INICIALIZANDO UDE@BOOK ===" << endl;
     if (!red.cargarDatosAlmacenamiento()) {
-        cout << "Error grave: No se pudo cargar el archivo 'usuarios.txt'." << endl;
-        cout << "Asegúrese de generar el dataset de 1000 usuarios primero." << endl;
+        cout << "Error grave: No se pudieron cargar los datos desde el almacenamiento." << endl;
         return 1;
     }
 
@@ -71,7 +66,6 @@ int main() {
 
         cout << "\n Autenticación correcta." << endl;
 
-        // Bucle de sesión del usuario autenticado
         bool sesionActiva = true;
         while (sesionActiva) {
             mostrarPantallaPrincipal(red, usuarioLogueado);
@@ -85,7 +79,6 @@ int main() {
                 sesionActiva = false;
             }
             else if (entradaOp == "N" || entradaOp == "n") {
-                // Refresca/alterna el grupo de 3 mejores amigos mostrados
                 cout << "\n[Actualizando grupo de fotos de perfil de amigos...]" << endl;
                 red.mostrarMejoresAmigos();
             }
@@ -114,12 +107,8 @@ int main() {
     return 0;
 }
 
-// -----------------------------------------------------------------------------
-// IMPLEMENTACIÓN DE SUBMENÚS FUNCIONALES (III, IV, V, VI)
-// -----------------------------------------------------------------------------
-
 void menuAdministrarAmistades(Redsocial& red, Usuario* usuario) {
-    cout << "\n--- III. ADMINISTRAR AMISTADES ---" << endl;
+    cout << "\n--- ADMINISTRAR AMISTADES ---" << endl;
     cout << "1. Enviar solicitud de amistad" << endl;
     cout << "2. Aceptar solicitudes de amistad recibidas (" << usuario->obtenerCantidadSolicitudes() << " pendientes)" << endl;
     cout << "0. Volver al menú principal" << endl;
@@ -160,7 +149,7 @@ void menuAdministrarAmistades(Redsocial& red, Usuario* usuario) {
 }
 
 void menuVisitarPerfilAmigo(Redsocial& red, Usuario* usuario) {
-    cout << "\n--- IV. VISITAR PERFIL DE UN AMIGO ---" << endl;
+    cout << "\n--- VISITAR PERFIL DE UN AMIGO ---" << endl;
     string amigo;
     cout << "Ingrese el nombre de usuario del amigo: ";
     cin >> amigo;
@@ -203,11 +192,11 @@ void menuVisitarPerfilAmigo(Redsocial& red, Usuario* usuario) {
             cin >> opC;
 
             if (opC == 1) {
-                // Siguiente se llama automáticamente en el loop
             } else if (opC == 2) {
                 alb.obtenerFotoAnterior();
             } else if (opC == 3) {
                 fActual.darLike();
+                red.guardarDatosAlmacenamiento();
                 cout << "¡Like actualizado!" << endl;
             } else if (opC == 0) {
                 enCarrusel = false;
@@ -218,9 +207,9 @@ void menuVisitarPerfilAmigo(Redsocial& red, Usuario* usuario) {
 }
 
 void menuVerSugerencias(Redsocial& red, Usuario* usuario) {
-    cout << "\n--- V. VER SUGERENCIAS DE AMISTAD ---" << endl;
+    cout << "\n--- VER SUGERENCIAS DE AMISTAD ---" << endl;
     int K;
-    cout << "Ingrese la cantidad K de sugerencias deseada (1 a 20): ";
+    cout << "Ingrese la cantidad K de sugerencias a consultar (1 a 20): ";
     cin >> K;
 
     if (K < 1) K = 1;
@@ -228,22 +217,27 @@ void menuVerSugerencias(Redsocial& red, Usuario* usuario) {
 
     red.verSugerenciasAmigos(K);
 
-    cout << "\n¿Desea enviar solicitud de amistad a alguna sugerencia? (S/N): ";
-    char resp;
-    cin >> resp;
+    cout << "\n¿Desea enviar una solicitud de amistad a alguna de las sugerencias? (S/N): ";
+    char opcion;
+    cin >> opcion;
 
-    if (resp == 'S' || resp == 's') {
-        string nomSug;
-        cout << "Ingrese el nombre de usuario: ";
-        cin >> nomSug;
-        red.enviarSolicitudAmistad(usuario->getUsername(), nomSug);
-        cout << "Solicitud enviada a " << nomSug << "." << endl;
+    if (opcion == 'S' || opcion == 's') {
+        string destino;
+        cout << "Ingrese el nombre de usuario exacto a quien desea enviar la solicitud: ";
+        cin >> destino;
+
+        if (red.enviarSolicitudAmistad(usuario->getUsername(), destino)) {
+            cout << "\n Solicitud de amistad enviada correctamente a " << destino << "." << endl;
+        } else {
+            cout << "\n No se pudo enviar la solicitud (el usuario no existe o ya son amigos)." << endl;
+        }
     }
+
     red.mostrarRecursos();
 }
 
 void menuAdministrarMensajes(Redsocial& red, Usuario* usuario) {
-    cout << "\n--- VI. ADMINISTRAR MENSAJES ---" << endl;
+    cout << "\n--- ADMINISTRAR MENSAJES ---" << endl;
     cout << "1. Enviar mensaje a un amigo" << endl;
     cout << "2. Leer nuevos mensajes (Bandeja de entrada)" << endl;
     cout << "3. Buscar mensajes por rango de fechas" << endl;

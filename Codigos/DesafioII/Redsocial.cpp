@@ -4,6 +4,8 @@
 #include <sstream>
 #include <string>
 
+using namespace std;
+
 Redsocial::Redsocial() {
     capacidadUsuarios = 1000;
     usuarioAutenticado = nullptr;
@@ -31,7 +33,7 @@ Redsocial::~Redsocial() {
     }
 }
 
-int Redsocial::buscarIndiceUsuario(const std::string& username) {
+int Redsocial::buscarIndiceUsuario(const string& username) {
     for (int i = 0; i < usuarios.obtenerTamano(); ++i) {
         monitor.incrementarIteracion(1);
         if (usuarios[i].getUsername() == username) {
@@ -46,7 +48,7 @@ void Redsocial::agregarUsuario(const Usuario& u) {
     monitor.registrarAsignacion(sizeof(Usuario));
 }
 
-Usuario* Redsocial::buscarUsuarioPorNombre(const std::string& nombre) {
+Usuario* Redsocial::buscarUsuarioPorNombre(const string& nombre) {
     int idx = buscarIndiceUsuario(nombre);
     if (idx != -1) return &usuarios[idx];
     return nullptr;
@@ -55,44 +57,42 @@ Usuario* Redsocial::buscarUsuarioPorNombre(const std::string& nombre) {
 bool Redsocial::cargarDatosAlmacenamiento() {
     monitor.reiniciarContadores();
 
-    // 1. CARGA DE USUARIOS (usuarios.txt)
-    std::ifstream fileUsers("usuarios.txt");
+    ifstream fileUsers("usuarios.txt");
     if (!fileUsers.is_open()) return false;
 
-    std::string linea;
-    while (std::getline(fileUsers, linea)) {
+    string linea;
+    while (getline(fileUsers, linea)) {
         monitor.incrementarIteracion(1);
         if (linea.empty()) continue;
 
-        std::stringstream ss(linea);
-        std::string user, pass, foto, email, ciudad;
+        stringstream ss(linea);
+        string user, pass, foto, email, ciudad;
 
-        std::getline(ss, user, '|');
-        std::getline(ss, pass, '|');
-        std::getline(ss, foto, '|');
-        std::getline(ss, email, '|');
-        std::getline(ss, ciudad, '|');
+        getline(ss, user, '|');
+        getline(ss, pass, '|');
+        getline(ss, foto, '|');
+        getline(ss, email, '|');
+        getline(ss, ciudad, '|');
 
         Usuario u(user, pass, foto);
         agregarUsuario(u);
     }
     fileUsers.close();
 
-    // 2. CARGA DE LA MATRIZ DE ADYACENCIA (matriz_adyacencia.txt)
-    std::ifstream fileMatriz("matriz_adyacencia.txt");
+    ifstream fileMatriz("matriz_adyacencia.txt");
     if (fileMatriz.is_open()) {
         int i = 0;
-        while (std::getline(fileMatriz, linea) && i < capacidadUsuarios) {
+        while (getline(fileMatriz, linea) && i < capacidadUsuarios) {
             monitor.incrementarIteracion(1);
             if (linea.empty()) continue;
 
-            std::stringstream ss(linea);
-            std::string val;
+            stringstream ss(linea);
+            string val;
             int j = 0;
 
-            while (std::getline(ss, val, ',') && j < capacidadUsuarios) {
+            while (getline(ss, val, ',') && j < capacidadUsuarios) {
                 if (!val.empty()) {
-                    int estadoAmistad = std::stoi(val);
+                    int estadoAmistad = stoi(val);
                     matrizAdyacencia[i][j] = estadoAmistad;
 
                     if (estadoAmistad == 1 && i != j) {
@@ -106,22 +106,21 @@ bool Redsocial::cargarDatosAlmacenamiento() {
         fileMatriz.close();
     }
 
-    // 3. CARGA DE ÁLBUMES Y FOTOS (albums_fotos.txt)
-    std::ifstream fileAlbums("albums_fotos.txt");
+    ifstream fileAlbums("albums_fotos.txt");
     if (fileAlbums.is_open()) {
-        while (std::getline(fileAlbums, linea)) {
+        while (getline(fileAlbums, linea)) {
             monitor.incrementarIteracion(1);
             if (linea.empty()) continue;
 
-            std::stringstream ss(linea);
-            std::string user, nomAlbum, priv, rutaFoto, fecha, strLikes;
+            stringstream ss(linea);
+            string user, nomAlbum, priv, rutaFoto, fecha, strLikes;
 
-            std::getline(ss, user, '|');
-            std::getline(ss, nomAlbum, '|');
-            std::getline(ss, priv, '|');
-            std::getline(ss, rutaFoto, '|');
-            std::getline(ss, fecha, '|');
-            std::getline(ss, strLikes, '|');
+            getline(ss, user, '|');
+            getline(ss, nomAlbum, '|');
+            getline(ss, priv, '|');
+            getline(ss, rutaFoto, '|');
+            getline(ss, fecha, '|');
+            getline(ss, strLikes, '|');
 
             int idxU = buscarIndiceUsuario(user);
             if (idxU != -1) {
@@ -141,7 +140,7 @@ bool Redsocial::cargarDatosAlmacenamiento() {
                     idxAlb = uRef.obtenerCantidadAlbumes() - 1;
                 }
 
-                int likes = strLikes.empty() ? 0 : std::stoi(strLikes);
+                int likes = strLikes.empty() ? 0 : stoi(strLikes);
                 Foto nuevaFoto(fecha, 2048, rutaFoto);
                 for (int l = 0; l < likes; ++l) nuevaFoto.darLike();
 
@@ -151,12 +150,12 @@ bool Redsocial::cargarDatosAlmacenamiento() {
         fileAlbums.close();
     }
 
-    std::cout << "[CARGA COMPLETA] Datos y estructuras cargados correctamente." << std::endl;
+    cout << "Se completo la carga correctamente." << endl;
     return true;
 }
 
 bool Redsocial::guardarDatosAlmacenamiento() {
-    std::ofstream fileAlbums("albums_fotos.txt");
+    ofstream fileAlbums("albums_fotos.txt");
     if (!fileAlbums.is_open()) return false;
 
     for (int i = 0; i < usuarios.obtenerTamano(); ++i) {
@@ -178,7 +177,7 @@ bool Redsocial::guardarDatosAlmacenamiento() {
     return true;
 }
 
-Usuario* Redsocial::autenticarUsuario(const std::string& username, const std::string& pass) {
+Usuario* Redsocial::autenticarUsuario(const string& username, const string& pass) {
     int idx = buscarIndiceUsuario(username);
     if (idx != -1 && usuarios[idx].getContrasena() == pass) {
         usuarioAutenticado = &usuarios[idx];
@@ -195,7 +194,7 @@ Usuario* Redsocial::getUsuarioAutenticado() {
     return usuarioAutenticado;
 }
 
-bool Redsocial::enviarSolicitudAmistad(const std::string& origen, const std::string& destino) {
+bool Redsocial::enviarSolicitudAmistad(const string& origen, const string& destino) {
     Usuario* uDestino = buscarUsuarioPorNombre(destino);
     if (uDestino != nullptr) {
         uDestino->agregarSolicitud(origen);
@@ -204,7 +203,7 @@ bool Redsocial::enviarSolicitudAmistad(const std::string& origen, const std::str
     return false;
 }
 
-bool Redsocial::aceptarSolicitudAmistad(const std::string& destinatario, const std::string& remitente) {
+bool Redsocial::aceptarSolicitudAmistad(const string& destinatario, const string& remitente) {
     int idx1 = buscarIndiceUsuario(destinatario);
     int idx2 = buscarIndiceUsuario(remitente);
 
@@ -218,7 +217,7 @@ bool Redsocial::aceptarSolicitudAmistad(const std::string& destinatario, const s
     return false;
 }
 
-bool Redsocial::enviarMensaje(const std::string& emisor, const std::string& receptor, const std::string& texto) {
+bool Redsocial::enviarMensaje(const string& emisor, const string& receptor, const string& texto) {
     Usuario* uReceptor = buscarUsuarioPorNombre(receptor);
     if (uReceptor != nullptr) {
         Mensaje msg(emisor, receptor, texto);
@@ -233,26 +232,82 @@ void Redsocial::mostrarMejoresAmigos() {
     int idxActual = buscarIndiceUsuario(usuarioAutenticado->getUsername());
     if (idxActual == -1) return;
 
-    std::cout << "\n--- MEJORES AMIGOS ---" << std::endl;
+    cout << "\n--- MEJORES AMIGOS ---" << endl;
     int mostrados = 0;
     for (int j = 0; j < usuarios.obtenerTamano() && mostrados < 3; ++j) {
         monitor.incrementarIteracion(1);
         if (matrizAdyacencia[idxActual][j] == 1) {
-            std::cout << "Amigo: " << usuarios[j].getUsername()
-            << " | Foto: " << usuarios[j].getFotoPerfilRuta() << std::endl;
+            cout << "Amigo: " << usuarios[j].getUsername()
+            << " | Foto: " << usuarios[j].getFotoPerfilRuta() << endl;
             mostrados++;
         }
     }
 }
 
 void Redsocial::verSugerenciasAmigos(int K) {
-    std::cout << "\n--- SUGERENCIAS DE AMISTAD (" << K << ") ---" << std::endl;
+    if (!usuarioAutenticado) return;
+
+    int idxUsuario = buscarIndiceUsuario(usuarioAutenticado->getUsername());
+    if (idxUsuario == -1) return;
+
+    int numUsuarios = usuarios.obtenerTamano();
+    int* amigosEnComun = new int[numUsuarios]();
+    monitor.registrarAsignacion(sizeof(int) * numUsuarios);
+
+    for (int j = 0; j < numUsuarios; ++j) {
+        monitor.incrementarIteracion(1);
+        if (matrizAdyacencia[idxUsuario][j] == 1) {
+            for (int k = 0; k < numUsuarios; ++k) {
+                monitor.incrementarIteracion(1);
+                if (matrizAdyacencia[j][k] == 1 && k != idxUsuario && matrizAdyacencia[idxUsuario][k] == 0) {
+                    amigosEnComun[k]++;
+                }
+            }
+        }
+    }
+
+    cout << "\n========================================================" << endl;
+    cout << "        SUGERENCIAS DE AMISTAD (TOP " << K << ")        " << endl;
+    cout << "========================================================" << endl;
+
+    int sugerenciasMostradas = 0;
+
+    for (int s = 0; s < K; ++s) {
+        int maxCoincidencias = 0;
+        int idxMejorSugerencia = -1;
+
+        for (int i = 0; i < numUsuarios; ++i) {
+            monitor.incrementarIteracion(1);
+            if (amigosEnComun[i] > maxCoincidencias) {
+                maxCoincidencias = amigosEnComun[i];
+                idxMejorSugerencia = i;
+            }
+        }
+
+        if (idxMejorSugerencia != -1 && maxCoincidencias > 0) {
+            sugerenciasMostradas++;
+            cout << " " << sugerenciasMostradas << ". " << usuarios[idxMejorSugerencia].getUsername()
+                 << " | " << maxCoincidencias << " amigos en común"
+                 << " | Foto: " << usuarios[idxMejorSugerencia].getFotoPerfilRuta() << endl;
+
+            amigosEnComun[idxMejorSugerencia] = 0;
+        } else {
+            break;
+        }
+    }
+
+    if (sugerenciasMostradas == 0) {
+        cout << "No se encontraron sugerencias de amistad con amigos en común en este momento." << endl;
+    }
+
+    delete[] amigosEnComun;
+    monitor.registrarLiberacion(sizeof(int) * numUsuarios);
 }
 
 void Redsocial::mostrarRecursos() {
-    std::cout << "\n=== CONSUMO DE RECURSOS ===" << std::endl;
-    std::cout << "Memoria consumida: " << monitor.obtenerMemoriaConsumida() << " bytes." << std::endl;
-    std::cout << "Iteraciones ejecutadas: " << monitor.obtenerIteraciones() << std::endl;
+    cout << "\n=== CONSUMO DE RECURSOS ===" << endl;
+    cout << "Memoria consumida: " << monitor.obtenerMemoriaConsumida() << " bytes." << endl;
+    cout << "Iteraciones ejecutadas: " << monitor.obtenerIteraciones() << endl;
 }
 
 Manejorecursos& Redsocial::getMonitor() {
