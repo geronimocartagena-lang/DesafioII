@@ -1,44 +1,101 @@
 #include "Usuario.h"
 
+using namespace std;
+
 Usuario::Usuario() {
     username = "";
     contrasena = "";
     fotoPerfilRuta = "";
+    email = "";
+    ciudad = "";
 }
 
-Usuario::Usuario(const std::string& user, const std::string& pass) {
-    this->username = user;
-    this->contrasena = pass;
-    this->fotoPerfilRuta = "/users/udeabook/static/" + user + "/profile.png";
+Usuario::Usuario(const Usuario& otro) {
+    this->username = otro.username;
+    this->contrasena = otro.contrasena;
+    this->fotoPerfilRuta = otro.fotoPerfilRuta;
+    this->email = otro.email;
+    this->ciudad = otro.ciudad;
+    this->listaAmigos = otro.listaAmigos;
+    this->solicitudesPendientes = otro.solicitudesPendientes;
+    this->albumes = otro.albumes;
+    this->mensajesEnviados = otro.mensajesEnviados;
+    this->mensajesRecibidos = otro.mensajesRecibidos;
 }
 
-Usuario::Usuario(const std::string& user, const std::string& pass, const std::string& foto) {
+Usuario::Usuario(const string& user, const string& pass, const string& foto) {
     this->username = user;
     this->contrasena = pass;
     this->fotoPerfilRuta = foto;
+    this->email = user + "@udea.edu.co";
+    this->ciudad = "Medellin";
 }
 
-Usuario::Usuario(const std::string& user, const std::string& fnac, const std::string& mail,
-                 const std::string& foto, const std::string& pass, const std::string& ciu,
-                 const std::string& pa, const std::string& finsc) {
+Usuario::~Usuario() {
+}
+
+string Usuario::getUsername() const {
+    return username;
+}
+
+void Usuario::setUsername(const string& user) {
     this->username = user;
-    this->fechaNacimiento = fnac;
+}
+
+string Usuario::getContrasena() const {
+    return contrasena;
+}
+
+void Usuario::setContrasena(const string& pass) {
+    this->contrasena = pass;
+}
+
+string Usuario::getFotoPerfilRuta() const {
+    return fotoPerfilRuta;
+}
+
+void Usuario::setFotoPerfilRuta(const string& foto) {
+    this->fotoPerfilRuta = foto;
+}
+
+string Usuario::getEmail() const {
+    return email;
+}
+
+void Usuario::setEmail(const string& mail) {
     this->email = mail;
-    this->fotoPerfilRuta = foto;
-    this->contrasena = pass;
-    this->ciudad = ciu;
-    this->pais = pa;
-    this->fechaInscripcion = finsc;
 }
 
-std::string Usuario::getUsername() const { return username; }
-std::string Usuario::getContrasena() const { return contrasena; }
-std::string Usuario::getFotoPerfilRuta() const { return fotoPerfilRuta; }
+string Usuario::getCiudad() const {
+    return ciudad;
+}
 
-void Usuario::setContrasena(const std::string& pass) { this->contrasena = pass; }
-void Usuario::setFotoPerfilRuta(const std::string& foto) { this->fotoPerfilRuta = foto; }
+void Usuario::setCiudad(const string& city) {
+    this->ciudad = city;
+}
 
-void Usuario::agregarSolicitud(const std::string& remitente) {
+void Usuario::agregarAmigo(const string& amigo) {
+    if (!esAmigo(amigo)) {
+        listaAmigos.agregarFinal(amigo);
+    }
+}
+
+bool Usuario::esAmigo(const string& amigo) const {
+    for (int i = 0; i < listaAmigos.obtenerTamano(); ++i) {
+        if (listaAmigos[i] == amigo) return true;
+    }
+    return false;
+}
+
+int Usuario::obtenerCantidadAmigos() const {
+    return listaAmigos.obtenerTamano();
+}
+
+string Usuario::obtenerAmigo(int index) const {
+    return listaAmigos[index];
+}
+
+void Usuario::agregarSolicitud(const string& remitente) {
     solicitudesPendientes.agregarFinal(remitente);
 }
 
@@ -46,35 +103,28 @@ int Usuario::obtenerCantidadSolicitudes() const {
     return solicitudesPendientes.obtenerTamano();
 }
 
-std::string Usuario::obtenerSolicitud(int index) {
+string Usuario::obtenerSolicitud(int index) const {
     return solicitudesPendientes[index];
 }
 
-void Usuario::eliminarSolicitud(int index) {
-    // Si tu Lista<T> no tiene eliminar, se simula o limpia
+void Usuario::agregarAlbum(const Album& alb) {
+    albumes.agregarFinal(alb);
 }
 
-void Usuario::agregarAmigo(const std::string& amigo) {
-    amigos.agregarFinal(amigo);
+int Usuario::obtenerCantidadAlbumes() const {
+    return albumes.obtenerTamano();
 }
 
-int Usuario::obtenerCantidadAmigos() const {
-    return amigos.obtenerTamano();
-}
-
-std::string Usuario::obtenerAmigo(int index) const {
-    return amigos[index];
-}
-
-bool Usuario::esAmigo(const std::string& nombre) const {
-    for (int i = 0; i < amigos.obtenerTamano(); ++i) {
-        if (amigos[i] == nombre) return true;
-    }
-    return false;
+Album& Usuario::obtenerAlbum(int index) {
+    return albumes[index];
 }
 
 void Usuario::recibirMensaje(const Mensaje& msg) {
     mensajesRecibidos.agregarFinal(msg);
+}
+
+void Usuario::enviarMensaje(const Mensaje& msg) {
+    mensajesEnviados.agregarFinal(msg);
 }
 
 int Usuario::obtenerCantidadMensajesRecibidos() const {
@@ -91,14 +141,7 @@ void Usuario::marcarMensajeLeido(int index) {
     }
 }
 
-void Usuario::agregarAlbum(const Album& alb) {
-    albumes.agregarFinal(alb);
-}
-
-int Usuario::obtenerCantidadAlbumes() const {
-    return albumes.obtenerTamano();
-}
-
-Album& Usuario::obtenerAlbum(int index) {
-    return albumes[index];
+ostream& operator<<(ostream& os, const Usuario& u) {
+    os << "Usuario: " << u.username << " | Profile: " << u.fotoPerfilRuta;
+    return os;
 }

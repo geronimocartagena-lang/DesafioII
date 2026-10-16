@@ -29,6 +29,9 @@ public:
 
     void darLike();
     void quitarLike();
+
+    // Sobrecarga del operador ++ para dar Like
+    Foto& operator++();
 };
 
 #endif // FOTO_H

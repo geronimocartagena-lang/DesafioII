@@ -2,6 +2,7 @@
 #define USUARIO_H
 
 #include <string>
+#include <iostream>
 #include "Lista.h"
 #include "Album.h"
 #include "Mensaje.h"
@@ -11,52 +12,57 @@ private:
     std::string username;
     std::string contrasena;
     std::string fotoPerfilRuta;
-    std::string fechaNacimiento;
     std::string email;
     std::string ciudad;
-    std::string pais;
-    std::string fechaInscripcion;
 
+    Lista<std::string> listaAmigos;
     Lista<std::string> solicitudesPendientes;
-    Lista<std::string> amigos;
+    Lista<Album> albumes;
     Lista<Mensaje> mensajesEnviados;
     Lista<Mensaje> mensajesRecibidos;
-    Lista<Album> albumes;
 
 public:
     Usuario();
-    Usuario(const std::string& user, const std::string& pass);
+    Usuario(const Usuario& otro);
     Usuario(const std::string& user, const std::string& pass, const std::string& foto);
-    Usuario(const std::string& user, const std::string& fnac, const std::string& mail,
-            const std::string& foto, const std::string& pass, const std::string& ciu,
-            const std::string& pa, const std::string& finsc);
+    ~Usuario();
 
     std::string getUsername() const;
-    std::string getContrasena() const;
-    std::string getFotoPerfilRuta() const;
+    void setUsername(const std::string& user);
 
+    std::string getContrasena() const;
     void setContrasena(const std::string& pass);
+
+    std::string getFotoPerfilRuta() const;
     void setFotoPerfilRuta(const std::string& foto);
 
-    // Métodos requeridos por main.cpp
-    void agregarSolicitud(const std::string& remitente);
-    int obtenerCantidadSolicitudes() const;
-    std::string obtenerSolicitud(int index);
-    void eliminarSolicitud(int index);
+    std::string getEmail() const;
+    void setEmail(const std::string& mail);
+
+    std::string getCiudad() const;
+    void setCiudad(const std::string& city);
 
     void agregarAmigo(const std::string& amigo);
+    bool esAmigo(const std::string& amigo) const;
     int obtenerCantidadAmigos() const;
     std::string obtenerAmigo(int index) const;
-    bool esAmigo(const std::string& nombre) const;
 
-    void recibirMensaje(const Mensaje& msg);
-    int obtenerCantidadMensajesRecibidos() const;
-    Mensaje& obtenerMensajeRecibido(int index);
-    void marcarMensajeLeido(int index);
+    void agregarSolicitud(const std::string& remitente);
+    int obtenerCantidadSolicitudes() const;
+    std::string obtenerSolicitud(int index) const;
 
     void agregarAlbum(const Album& alb);
     int obtenerCantidadAlbumes() const;
     Album& obtenerAlbum(int index);
+
+    void recibirMensaje(const Mensaje& msg);
+    void enviarMensaje(const Mensaje& msg);
+    int obtenerCantidadMensajesRecibidos() const;
+    Mensaje& obtenerMensajeRecibido(int index);
+    void marcarMensajeLeido(int index);
+
+    // Sobrecarga del operador << para imprimir informacion del usuario
+    friend std::ostream& operator<<(std::ostream& os, const Usuario& u);
 };
 
 #endif // USUARIO_H

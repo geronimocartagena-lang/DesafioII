@@ -61,3 +61,8 @@ void Foto::darLike() {
 void Foto::quitarLike() {
     if (conteoLikes > 0) conteoLikes--;
 }
+
+Foto& Foto::operator++() {
+    this->darLike();
+    return *this;
+}

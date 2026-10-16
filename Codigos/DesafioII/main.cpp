@@ -17,7 +17,7 @@ void mostrarPantallaPrincipal(Redsocial& red, Usuario* usuario) {
     cout << "\n========================================================" << endl;
     red.mostrarMejoresAmigos();
 
-    cout << "\nBienvenido a UdeaBook :D // " << usuario->getUsername() << endl;
+   cout << "\nBienvenido a Ude@Book :D // " << *usuario << endl; //SOBRECARGA
     cout << "========================================================" << endl;
     cout << "Menú de opciones:" << endl;
     cout << "  1.- Administrar amistades" << endl;
@@ -195,7 +195,7 @@ void menuVisitarPerfilAmigo(Redsocial& red, Usuario* usuario) {
             } else if (opC == 2) {
                 alb.obtenerFotoAnterior();
             } else if (opC == 3) {
-                fActual.darLike();
+                ++fActual; //SOBRECARGA
                 red.guardarDatosAlmacenamiento();
                 cout << "¡Like actualizado!" << endl;
             } else if (opC == 0) {
