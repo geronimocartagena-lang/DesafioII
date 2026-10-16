@@ -195,7 +195,7 @@ void menuVisitarPerfilAmigo(Redsocial& red, Usuario* usuario) {
             } else if (opC == 2) {
                 alb.obtenerFotoAnterior();
             } else if (opC == 3) {
-                ++fActual; //SOBRECARGA
+                ++fActual; //SOBRECARGA  ========================================================================
                 red.guardarDatosAlmacenamiento();
                 cout << "¡Like actualizado!" << endl;
             } else if (opC == 0) {

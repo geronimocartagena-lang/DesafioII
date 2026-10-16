@@ -43,4 +43,4 @@ public:
     Manejorecursos& getMonitor();
 };
 
-#endif // REDSOCIAL_H
+#endif

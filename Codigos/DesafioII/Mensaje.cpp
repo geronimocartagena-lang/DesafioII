@@ -1,12 +1,26 @@
 #include "Mensaje.h"
+#include <ctime>
+#include <iomanip>
+#include <sstream>
 
 using namespace std;
+
+// obtener la fecha actual en formato "YYYY-MM-DD"
+string obtenerFechaActual() {
+    time_t ahora = time(nullptr);
+    tm* tiempoLocal = localtime(&ahora);
+    stringstream ss;
+    ss << (tiempoLocal->tm_year + 1900) << "-"
+       << setfill('0') << setw(2) << (tiempoLocal->tm_mon + 1) << "-"
+       << setfill('0') << setw(2) << tiempoLocal->tm_mday;
+    return ss.str();
+}
 
 Mensaje::Mensaje() {
     emisor = "";
     receptor = "";
     textoContenido = "";
-    fechaEnvio = "2026-10-12";
+    fechaEnvio = obtenerFechaActual();
     leido = false;
 }
 
@@ -22,7 +36,7 @@ Mensaje::Mensaje(const string& em, const string& rec, const string& txt) {
     this->emisor = em;
     this->receptor = rec;
     this->textoContenido = txt;
-    this->fechaEnvio = "2026-10-12";
+    this->fechaEnvio = obtenerFechaActual(); // Se asigna automáticamente la fecha del día
     this->leido = false;
 }
 
@@ -30,7 +44,7 @@ Mensaje::Mensaje(const string& em, const string& rec, const string& txt, const s
     this->emisor = em;
     this->receptor = rec;
     this->textoContenido = txt;
-    this->fechaEnvio = fecha;
+    this->fechaEnvio = fecha; // Permite cargar fechas personalizadas desde archivos .txt
     this->leido = false;
 }
 

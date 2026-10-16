@@ -65,4 +65,4 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Usuario& u);
 };
 
-#endif // USUARIO_H
+#endif

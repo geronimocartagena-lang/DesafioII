@@ -42,4 +42,4 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Mensaje& m);
 };
 
-#endif // MENSAJE_H
+#endif

@@ -75,6 +75,8 @@ bool Redsocial::cargarDatosAlmacenamiento() {
         getline(ss, ciudad, '|');
 
         Usuario u(user, pass, foto);
+        u.setEmail(email);
+        u.setCiudad(ciudad);
         agregarUsuario(u);
     }
     fileUsers.close();
@@ -148,6 +150,13 @@ bool Redsocial::cargarDatosAlmacenamiento() {
             }
         }
         fileAlbums.close();
+    }
+
+    // REGISTRO DEL MENSAJE DE HACE 6 SEMANAS DE usuario2 PARA usuario1
+    Usuario* u1 = buscarUsuarioPorNombre("usuario1");
+    if (u1 != nullptr) {
+        Mensaje msgAntiguo("usuario2", "usuario1", "Hola Me dejastes envisto >:( ", "2026-09-04");
+        u1->recibirMensaje(msgAntiguo);
     }
 
     cout << "Se completo la carga correctamente." << endl;

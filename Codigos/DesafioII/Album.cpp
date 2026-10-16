@@ -25,7 +25,7 @@ Album::Album(const string& nom, const string& ruta, const string& priv) {
 }
 
 Album::~Album() {
-    // Manejado automáticamente por el destructor de Lista<T>
+    // Manejado por destructor de Lista<T>
 }
 
 string Album::getNombre() const {

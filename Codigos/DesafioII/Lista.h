@@ -21,7 +21,7 @@ private:
 public:
     Lista() : cabeza(nullptr), tamano(0) {}
 
-    // Constructor de copia (Copia profunda)
+    // Constructor de copia
     Lista(const Lista<T>& otra) : cabeza(nullptr), tamano(0) {
         Nodo<T>* actual = otra.cabeza;
         while (actual != nullptr) {
@@ -35,7 +35,7 @@ public:
         limpiar();
     }
 
-    // Operador de asignacion (Copia profunda)
+    // Operador de asignacion
     Lista<T>& operator=(const Lista<T>& otra) {
         if (this != &otra) {
             limpiar();

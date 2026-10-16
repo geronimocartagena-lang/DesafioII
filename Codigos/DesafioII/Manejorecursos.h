@@ -21,4 +21,4 @@ public:
     void reiniciarContadores();
 };
 
-#endif // MANEJORECURSOS_H
+#endif
