@@ -3,23 +3,22 @@
 
 #include <cstddef>
 
-class Manejorecursos
-{
+class Manejorecursos {
 private:
-    size_t memoriaConsumidaBytes;
+    std::size_t memoriaConsumidaBytes;
     unsigned long long contadorIteraciones;
 
 public:
     Manejorecursos();
+    ~Manejorecursos();
 
-    void registrarAsignacion(size_t bytes);
-    void registrarLiberacion(size_t bytes);
-    void incrementarIteracion(unsigned long long num = 1);
+    void registrarAsignacion(std::size_t bytes);
+    void registrarLiberacion(std::size_t bytes);
+    void incrementarIteracion(int num = 1);
 
-    size_t obtenerMemoriaConsumida() const;
+    std::size_t obtenerMemoriaConsumida() const;
     unsigned long long obtenerIteraciones() const;
-
     void reiniciarContadores();
 };
 
-#endif
+#endif // MANEJORECURSOS_H

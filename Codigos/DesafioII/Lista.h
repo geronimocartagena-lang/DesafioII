@@ -1,196 +1,105 @@
 #ifndef LISTA_H
 #define LISTA_H
 
+#include <iostream>
 #include <stdexcept>
 
 template <typename T>
-class Lista
-{
+struct Nodo {
+    T dato;
+    Nodo<T>* siguiente;
+
+    Nodo(const T& d) : dato(d), siguiente(nullptr) {}
+};
+
+template <typename T>
+class Lista {
 private:
-    class Nodo
-    {
-    public:
-        T dato;
-        Nodo* siguiente;
-
-        Nodo(const T& elemento)
-        {
-            dato = elemento;
-            siguiente = nullptr;
-        }
-    };
-
-    Nodo* cabeza;
+    Nodo<T>* cabeza;
     int tamano;
 
-    void copiar(const Lista<T>& otra)
-    {
-        Nodo* actual = otra.cabeza;
-
-        while (actual != nullptr)
-        {
-            agregarFinal(actual->dato);
-            actual = actual->siguiente;
-        }
-    }
-
 public:
-    Lista()
-    {
-        cabeza = nullptr;
-        tamano = 0;
-    }
+    Lista() : cabeza(nullptr), tamano(0) {}
 
-    Lista(const Lista<T>& otra)
-    {
-        cabeza = nullptr;
-        tamano = 0;
-        copiar(otra);
-    }
-
-    ~Lista()
-    {
-        Nodo* actual = cabeza;
-
-        while (actual != nullptr)
-        {
-            Nodo* temporal = actual;
+    // Constructor de copia (Copia profunda)
+    Lista(const Lista<T>& otra) : cabeza(nullptr), tamano(0) {
+        Nodo<T>* actual = otra.cabeza;
+        while (actual != nullptr) {
+            this->agregarFinal(actual->dato);
             actual = actual->siguiente;
-            delete temporal;
         }
-
-        cabeza = nullptr;
-        tamano = 0;
     }
 
-    Lista<T>& operator=(const Lista<T>& otra)
-    {
-        if (this != &otra)
-        {
-            Nodo* actual = cabeza;
+    // Destructor
+    ~Lista() {
+        limpiar();
+    }
 
-            while (actual != nullptr)
-            {
-                Nodo* temporal = actual;
+    // Operador de asignacion (Copia profunda)
+    Lista<T>& operator=(const Lista<T>& otra) {
+        if (this != &otra) {
+            limpiar();
+            Nodo<T>* actual = otra.cabeza;
+            while (actual != nullptr) {
+                this->agregarFinal(actual->dato);
                 actual = actual->siguiente;
-                delete temporal;
             }
-
-            cabeza = nullptr;
-            tamano = 0;
-            copiar(otra);
         }
-
         return *this;
     }
 
-    void agregarFinal(const T& elemento)
-    {
-        Nodo* nuevo = new Nodo(elemento);
-
-        if (cabeza == nullptr)
-        {
+    void agregarFinal(const T& elemento) {
+        Nodo<T>* nuevo = new Nodo<T>(elemento);
+        if (cabeza == nullptr) {
             cabeza = nuevo;
-        }
-        else
-        {
-            Nodo* actual = cabeza;
-
-            while (actual->siguiente != nullptr)
-            {
-                actual = actual->siguiente;
+        } else {
+            Nodo<T>* aux = cabeza;
+            while (aux->siguiente != nullptr) {
+                aux = aux->siguiente;
             }
-
-            actual->siguiente = nuevo;
+            aux->siguiente = nuevo;
         }
-
         tamano++;
     }
 
-    T& obtenerElemento(int indice)
-    {
-        if (indice < 0 || indice >= tamano)
-        {
-            throw std::out_of_range("Indice fuera de rango");
-        }
-
-        Nodo* actual = cabeza;
-
-        for (int i = 0; i < indice; i++)
-        {
-            actual = actual->siguiente;
-        }
-
-        return actual->dato;
-    }
-
-    const T& obtenerElemento(int indice) const
-    {
-        if (indice < 0 || indice >= tamano)
-        {
-            throw std::out_of_range("Indice fuera de rango");
-        }
-
-        Nodo* actual = cabeza;
-
-        for (int i = 0; i < indice; i++)
-        {
-            actual = actual->siguiente;
-        }
-
-        return actual->dato;
-    }
-
-    int obtenerTamano() const
-    {
+    int obtenerTamano() const {
         return tamano;
     }
 
-    T& operator[](int indice)
-    {
-        return obtenerElemento(indice);
+    T& operator[](int index) {
+        if (index < 0 || index >= tamano) {
+            static T vacio;
+            return vacio;
+        }
+        Nodo<T>* aux = cabeza;
+        for (int i = 0; i < index; ++i) {
+            aux = aux->siguiente;
+        }
+        return aux->dato;
     }
 
-    const T& operator[](int indice) const
-    {
-        return obtenerElemento(indice);
+    const T& operator[](int index) const {
+        if (index < 0 || index >= tamano) {
+            static T vacio;
+            return vacio;
+        }
+        Nodo<T>* aux = cabeza;
+        for (int i = 0; i < index; ++i) {
+            aux = aux->siguiente;
+        }
+        return aux->dato;
     }
 
-    bool estaVacia() const
-    {
-        return cabeza == nullptr;
-    }
-
-    void eliminarElemento(int indice)
-    {
-        if (indice < 0 || indice >= tamano)
-        {
-            throw std::out_of_range("Indice fuera de rango");
+    void limpiar() {
+        Nodo<T>* actual = cabeza;
+        while (actual != nullptr) {
+            Nodo<T>* siguiente = actual->siguiente;
+            delete actual;
+            actual = siguiente;
         }
-
-        Nodo* eliminar = nullptr;
-
-        if (indice == 0)
-        {
-            eliminar = cabeza;
-            cabeza = cabeza->siguiente;
-        }
-        else
-        {
-            Nodo* anterior = cabeza;
-
-            for (int i = 0; i < indice - 1; i++)
-            {
-                anterior = anterior->siguiente;
-            }
-
-            eliminar = anterior->siguiente;
-            anterior->siguiente = eliminar->siguiente;
-        }
-
-        delete eliminar;
-        tamano--;
+        cabeza = nullptr;
+        tamano = 0;
     }
 };
 
-#endif
+#endif // LISTA_H

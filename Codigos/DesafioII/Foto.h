@@ -2,33 +2,33 @@
 #define FOTO_H
 
 #include <string>
-using namespace std;
 
-class Foto
-{
+class Foto {
 private:
-    string fechaCaptura;
+    std::string fechaCaptura;
     unsigned int tamanoBytes;
-    string rutaArchivo;
+    std::string rutaArchivo;
     int conteoLikes;
 
 public:
     Foto();
     Foto(const Foto& otra);
-    Foto(string fecha, unsigned int tamano, string ruta);
+    Foto(const std::string& fecha, unsigned int tam, const std::string& ruta);
     ~Foto();
+
+    std::string getFechaCaptura() const;
+    void setFechaCaptura(const std::string& fecha);
+
+    unsigned int getTamanoBytes() const;
+    void setTamanoBytes(unsigned int tam);
+
+    std::string getRutaArchivo() const;
+    void setRutaArchivo(const std::string& ruta);
+
+    int getConteoLikes() const;
 
     void darLike();
     void quitarLike();
-
-    string getRutaArchivo() const;
-    string getFechaCaptura() const;
-    unsigned int getTamanoBytes() const;
-    int getConteoLikes() const;
-
-    void setFechaCaptura(string fecha);
-    void setTamanoBytes(unsigned int tamano);
-    void setRutaArchivo(string ruta);
 };
 
-#endif
+#endif // FOTO_H

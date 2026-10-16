@@ -1,281 +1,296 @@
 #include <iostream>
 #include <string>
-#include <limits>
-
 #include "Redsocial.h"
+#include "Usuario.h"
+#include "Album.h"
+#include "Foto.h"
+#include "Mensaje.h"
 
 using namespace std;
 
-int main()
-{
+// Prototipos de submenús LISTA ENLASADA
+void menuAdministrarAmistades(Redsocial& red, Usuario* usuario);
+void menuVisitarPerfilAmigo(Redsocial& red, Usuario* usuario);
+void menuVerSugerencias(Redsocial& red, Usuario* usuario);
+void menuAdministrarMensajes(Redsocial& red, Usuario* usuario);
+
+void mostrarPantallaPrincipal(Redsocial& red, Usuario* usuario) {
+    cout << "\n========================================================" << endl;
+    // Muestra 3 mejores amigos (fotos de perfil) con prioridad por coincidencias
+    red.mostrarMejoresAmigos();
+
+    cout << "\nBienvenido a UdeaBook // " << usuario->getUsername() << endl;
+    cout << "========================================================" << endl;
+    cout << "Menú de opciones:" << endl;
+    cout << "  1.- Administrar amistades" << endl;
+    cout << "  2.- Visitar perfil de un amigo" << endl;
+    cout << "  3.- Ver sugerencias de amistad" << endl;
+    cout << "  4.- Administrar mensajes" << endl;
+    cout << "  5.- Medición global del consumo de recursos" << endl;
+    cout << "\n.- Ingrese 'N' o 'n' para alternar el grupo de fotos de perfil de amigos." << endl;
+    cout << ".- Ingrese 'S' o 's' para cerrar su sesión." << endl;
+    cout << "Su opción: ";
+}
+
+int main() {
     Redsocial red;
 
-    Usuario ana("ana", "1234");
-    Usuario bruno("bruno", "1234");
-    Usuario camila("camila", "1234");
-    Usuario david("david", "1234");
+    // Carga de los 1000 usuarios y relaciones desde usuarios.txt al iniciar
+    cout << "=== INICIALIZANDO UDE@BOOK ===" << endl;
+    if (!red.cargarDatosAlmacenamiento()) {
+        cout << "Error grave: No se pudo cargar el archivo 'usuarios.txt'." << endl;
+        cout << "Asegúrese de generar el dataset de 1000 usuarios primero." << endl;
+        return 1;
+    }
 
-    red.agregarUsuario(ana);
-    red.agregarUsuario(bruno);
-    red.agregarUsuario(camila);
-    red.agregarUsuario(david);
+    bool ejecucionActiva = true;
 
-    red.enviarSolicitudAmistad("ana", "bruno");
-    red.aceptarSolicitudAmistad("bruno", "ana");
+    while (ejecucionActiva) {
+        cout << "\n=========================================" << endl;
+        cout << "         INICIO DE SESIÓN UDE@BOOK        " << endl;
+        cout << "=========================================" << endl;
 
-    red.enviarSolicitudAmistad("ana", "camila");
-    red.aceptarSolicitudAmistad("camila", "ana");
+        string username, password;
+        cout << "Nombre de usuario (o '0' para salir del programa): ";
+        cin >> username;
 
-    int opcion = 0;
+        if (username == "0") {
+            ejecucionActiva = false;
+            break;
+        }
 
-    do
-    {
-        cout << "\n===== Ude@Book =====\n";
-        cout << "1. Iniciar sesion\n";
-        cout << "2. Cargar datos\n";
-        cout << "3. Guardar datos\n";
-        cout << "0. Salir\n";
-        cout << "Opcion: ";
+        cout << "Contraseña: ";
+        cin >> password;
 
+        Usuario* usuarioLogueado = red.autenticarUsuario(username, password);
 
-        if (!(cin >> opcion))
-        {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            opcion = -1;
+        if (usuarioLogueado == nullptr) {
+            cout << "\n Credenciales incorrectas. Intente nuevamente." << endl;
             continue;
         }
 
-        if (opcion == 1)
-        {
-            string nombre;
-            string contrasena;
+        cout << "\n Autenticación correcta." << endl;
 
-            cout << "Usuario: ";
-            cin >> nombre;
+        // Bucle de sesión del usuario autenticado
+        bool sesionActiva = true;
+        while (sesionActiva) {
+            mostrarPantallaPrincipal(red, usuarioLogueado);
 
-            cout << "Contrasena: ";
-            cin >> contrasena;
+            string entradaOp;
+            cin >> entradaOp;
 
-            Usuario* usuario =
-                red.autenticarUsuario(nombre, contrasena);
-
-            if (usuario == nullptr)
-            {
-                cout << "Credenciales incorrectas.\n";
-                continue;
+            if (entradaOp == "S" || entradaOp == "s") {
+                red.cerrarSesion();
+                cout << "\nSesión cerrada exitosamente." << endl;
+                sesionActiva = false;
             }
-
-            int opcionUsuario = -1;
-
-            do
-            {
-                cout << "\n===== Menu principal =====\n";
-                cout << "Usuario: "
-                     << usuario->getUsername() << '\n';
-                cout << "1. Enviar solicitud de amistad\n";
-                cout << "2. Ver solicitudes recibidas\n";
-                cout << "3. Aceptar solicitud de amistad\n";
-                cout << "4. Enviar mensaje\n";
-                cout << "5. Leer mensajes recibidos\n";
-                cout << "6. Ver amigos\n";
-                cout << "7. Ver sugerencias\n";
-                cout << "8. Visitar albumes de un amigo\n";
-                cout << "9. Ver consumo de recursos\n";
-                cout << "0. Cerrar sesion\n";
-                cout << "Opcion: ";
-
-                if (!(cin >> opcionUsuario))
-                {
-                    cin.clear();
-                    cin.ignore(
-                        numeric_limits<streamsize>::max(), '\n');
-                    opcionUsuario = -1;
-                    continue;
-                }
-
-                if (opcionUsuario == 1)
-                {
-                    string destino;
-
-                    cout << "Nombre del usuario: ";
-                    cin >> destino;
-
-                    if (red.enviarSolicitudAmistad(
-                            usuario->getUsername(), destino))
-                    {
-                        cout << "Solicitud enviada.\n";
-                    }
-                    else
-                    {
-                        cout << "No se pudo enviar la solicitud.\n";
-                    }
-                }
-                else if (opcionUsuario == 2)
-                {
-                    for (int i = 0;
-                         i < usuario->obtenerCantidadSolicitudes();
-                         i++)
-                    {
-                        cout << i + 1 << ". "
-                             << usuario->obtenerSolicitud(i)
-                             << '\n';
-                    }
-
-                    if (usuario->obtenerCantidadSolicitudes() == 0)
-                    {
-                        cout << "No hay solicitudes pendientes.\n";
-                    }
-                }
-                else if (opcionUsuario == 3)
-                {
-                    string remitente;
-
-                    cout << "Usuario que envio la solicitud: ";
-                    cin >> remitente;
-
-                    if (red.aceptarSolicitudAmistad(
-                            usuario->getUsername(), remitente))
-                    {
-                        cout << "Solicitud aceptada.\n";
-                    }
-                    else
-                    {
-                        cout << "No se encontro esa solicitud.\n";
-                    }
-                }
-                else if (opcionUsuario == 4)
-                {
-                    string destino;
-                    string texto;
-
-                    cout << "Enviar a: ";
-                    cin >> destino;
-
-                    cin.ignore(
-                        numeric_limits<streamsize>::max(), '\n');
-
-                    cout << "Escriba el mensaje: ";
-                    getline(cin, texto);
-
-                    if (red.enviarMensaje(
-                            usuario->getUsername(), destino, texto))
-                    {
-                        cout << "Mensaje enviado.\n";
-                    }
-                    else
-                    {
-                        cout << "No se pudo enviar el mensaje.\n";
-                    }
-                }
-                else if (opcionUsuario == 5)
-                {
-                    for (int i = 0;
-                         i < usuario->obtenerCantidadMensajesRecibidos();
-                         i++)
-                    {
-                        Mensaje mensaje =
-                            usuario->obtenerMensajeRecibido(i);
-
-                        cout << '\n' << mensaje << '\n';
-
-                        if (!mensaje.getLeido())
-                        {
-                            usuario->marcarMensajeLeido(i);
-                        }
-                    }
-
-                    if (usuario->obtenerCantidadMensajesRecibidos() == 0)
-                    {
-                        cout << "No hay mensajes recibidos.\n";
-                    }
-                }
-                else if (opcionUsuario == 6)
-                {
-                    for (int i = 0;
-                         i < usuario->obtenerCantidadAmigos();
-                         i++)
-                    {
-                        cout << i + 1 << ". "
-                             << usuario->obtenerAmigo(i) << '\n';
-                    }
-                }
-                else if (opcionUsuario == 7)
-                {
-                    Lista<Usuario> sugerencias =
-                        red.obtenerSugerenciasAmigos(*usuario);
-
-                    for (int i = 0;
-                         i < sugerencias.obtenerTamano() && i < 20;
-                         i++)
-                    {
-                        cout << i + 1 << ". "
-                             << sugerencias[i].getUsername() << '\n';
-                    }
-                }
-                else if (opcionUsuario == 8)
-                {
-                    string nombreAmigo;
-
-                    cout << "Nombre del amigo: ";
-                    cin >> nombreAmigo;
-
-                    Usuario* amigo =
-                        red.buscarUsuarioPorNombre(nombreAmigo);
-
-                    if (amigo == nullptr || !usuario->esAmigo(nombreAmigo))
-                    {
-                        cout << "No se encontro ese amigo.\n";
-                    }
-                    else
-                    {
-                        for (int i = 0;
-                             i < amigo->obtenerCantidadAlbumes();
-                             i++)
-                        {
-                            Album album = amigo->obtenerAlbum(i);
-
-                            cout << i + 1 << ". "
-                                 << album.getNombre()
-                                 << " - Privacidad: "
-                                 << album.getPrivacidad()
-                                 << " - Fotos: "
-                                 << album.obtenerCantidadFotos()
-                                 << '\n';
-                        }
-                    }
-                }
-                else if (opcionUsuario == 9)
-                {
-                    red.mostrarRecursos();
-                }
-
-            } while (opcionUsuario != 0);
-        }
-        else if (opcion == 2)
-        {
-            if (red.cargarDatosAlmacenamiento())
-            {
-                cout << "Datos cargados.\n";
+            else if (entradaOp == "N" || entradaOp == "n") {
+                // Refresca/alterna el grupo de 3 mejores amigos mostrados
+                cout << "\n[Actualizando grupo de fotos de perfil de amigos...]" << endl;
+                red.mostrarMejoresAmigos();
             }
-            else
-            {
-                cout << "No se pudo abrir usuarios.txt.\n";
+            else if (entradaOp == "1") {
+                menuAdministrarAmistades(red, usuarioLogueado);
+            }
+            else if (entradaOp == "2") {
+                menuVisitarPerfilAmigo(red, usuarioLogueado);
+            }
+            else if (entradaOp == "3") {
+                menuVerSugerencias(red, usuarioLogueado);
+            }
+            else if (entradaOp == "4") {
+                menuAdministrarMensajes(red, usuarioLogueado);
+            }
+            else if (entradaOp == "5") {
+                red.mostrarRecursos();
+            }
+            else {
+                cout << "\nOpción no válida. Intente de nuevo." << endl;
             }
         }
-        else if (opcion == 3)
-        {
-            if (red.guardarDatosAlmacenamiento())
-            {
-                cout << "Datos guardados.\n";
-            }
-            else
-            {
-                cout << "No se pudieron guardar los datos.\n";
-            }
-        }
+    }
 
-    } while (opcion != 0);
-
+    cout << "\nGracias por utilizar Ude@Book." << endl;
     return 0;
+}
+
+// -----------------------------------------------------------------------------
+// IMPLEMENTACIÓN DE SUBMENÚS FUNCIONALES (III, IV, V, VI)
+// -----------------------------------------------------------------------------
+
+void menuAdministrarAmistades(Redsocial& red, Usuario* usuario) {
+    cout << "\n--- III. ADMINISTRAR AMISTADES ---" << endl;
+    cout << "1. Enviar solicitud de amistad" << endl;
+    cout << "2. Aceptar solicitudes de amistad recibidas (" << usuario->obtenerCantidadSolicitudes() << " pendientes)" << endl;
+    cout << "0. Volver al menú principal" << endl;
+    cout << "Selección: ";
+
+    int op;
+    cin >> op;
+
+    if (op == 1) {
+        string destino;
+        cout << "Ingrese el nombre de usuario a solicitar amistad: ";
+        cin >> destino;
+
+        if (red.enviarSolicitudAmistad(usuario->getUsername(), destino)) {
+            cout << "Solicitud enviada exitosamente a " << destino << "." << endl;
+        } else {
+            cout << "No se pudo enviar la solicitud (el usuario no existe o ya son amigos)." << endl;
+        }
+    } else if (op == 2) {
+        if (usuario->obtenerCantidadSolicitudes() == 0) {
+            cout << "No tienes solicitudes de amistad pendientes." << endl;
+        } else {
+            cout << "\nSolicitudes pendientes:" << endl;
+            for (int i = 0; i < usuario->obtenerCantidadSolicitudes(); ++i) {
+                cout << "  " << (i + 1) << ". " << usuario->obtenerSolicitud(i) << endl;
+            }
+            cout << "Ingrese el número de la solicitud a aceptar (o 0 para cancelar): ";
+            int sel;
+            cin >> sel;
+            if (sel > 0 && sel <= usuario->obtenerCantidadSolicitudes()) {
+                string remitente = usuario->obtenerSolicitud(sel - 1);
+                red.aceptarSolicitudAmistad(usuario->getUsername(), remitente);
+                cout << "¡Ahora eres amigo de " << remitente << "!" << endl;
+            }
+        }
+    }
+    red.mostrarRecursos();
+}
+
+void menuVisitarPerfilAmigo(Redsocial& red, Usuario* usuario) {
+    cout << "\n--- IV. VISITAR PERFIL DE UN AMIGO ---" << endl;
+    string amigo;
+    cout << "Ingrese el nombre de usuario del amigo: ";
+    cin >> amigo;
+
+    Usuario* uAmigo = red.buscarUsuarioPorNombre(amigo);
+    if (uAmigo == nullptr || !usuario->esAmigo(amigo)) {
+        cout << "El usuario especificado no existe o no se encuentra en tu lista de amigos." << endl;
+        red.mostrarRecursos();
+        return;
+    }
+
+    cout << "\nPerfil de: " << uAmigo->getUsername() << " | Foto: " << uAmigo->getFotoPerfilRuta() << endl;
+    cout << "Álbumes disponibles: " << uAmigo->obtenerCantidadAlbumes() << endl;
+
+    if (uAmigo->obtenerCantidadAlbumes() == 0) {
+        cout << "Este amigo no tiene álbumes creados." << endl;
+        red.mostrarRecursos();
+        return;
+    }
+
+    for (int i = 0; i < uAmigo->obtenerCantidadAlbumes(); ++i) {
+        cout << "  " << (i + 1) << ". " << uAmigo->obtenerAlbum(i).getNombre() << endl;
+    }
+
+    cout << "Seleccione el número del álbum a explorar: ";
+    int idxAlb;
+    cin >> idxAlb;
+
+    if (idxAlb > 0 && idxAlb <= uAmigo->obtenerCantidadAlbumes()) {
+        Album& alb = uAmigo->obtenerAlbum(idxAlb - 1);
+        cout << "\n=== CARRUSEL DE FOTOS: " << alb.getNombre() << " ===" << endl;
+
+        bool enCarrusel = true;
+        while (enCarrusel) {
+            Foto& fActual = alb.obtenerFotoSiguiente();
+            cout << "\n[Foto actual]: " << fActual.getRutaArchivo() << " | Likes: " << fActual.getConteoLikes() << endl;
+            cout << "Opciones: [1] Siguiente | [2] Anterior | [3] Dar/Quitar Like | [0] Salir del álbum" << endl;
+            cout << "Opción: ";
+            int opC;
+            cin >> opC;
+
+            if (opC == 1) {
+                // Siguiente se llama automáticamente en el loop
+            } else if (opC == 2) {
+                alb.obtenerFotoAnterior();
+            } else if (opC == 3) {
+                fActual.darLike();
+                cout << "¡Like actualizado!" << endl;
+            } else if (opC == 0) {
+                enCarrusel = false;
+            }
+        }
+    }
+    red.mostrarRecursos();
+}
+
+void menuVerSugerencias(Redsocial& red, Usuario* usuario) {
+    cout << "\n--- V. VER SUGERENCIAS DE AMISTAD ---" << endl;
+    int K;
+    cout << "Ingrese la cantidad K de sugerencias deseada (1 a 20): ";
+    cin >> K;
+
+    if (K < 1) K = 1;
+    if (K > 20) K = 20;
+
+    red.verSugerenciasAmigos(K);
+
+    cout << "\n¿Desea enviar solicitud de amistad a alguna sugerencia? (S/N): ";
+    char resp;
+    cin >> resp;
+
+    if (resp == 'S' || resp == 's') {
+        string nomSug;
+        cout << "Ingrese el nombre de usuario: ";
+        cin >> nomSug;
+        red.enviarSolicitudAmistad(usuario->getUsername(), nomSug);
+        cout << "Solicitud enviada a " << nomSug << "." << endl;
+    }
+    red.mostrarRecursos();
+}
+
+void menuAdministrarMensajes(Redsocial& red, Usuario* usuario) {
+    cout << "\n--- VI. ADMINISTRAR MENSAJES ---" << endl;
+    cout << "1. Enviar mensaje a un amigo" << endl;
+    cout << "2. Leer nuevos mensajes (Bandeja de entrada)" << endl;
+    cout << "3. Buscar mensajes por rango de fechas" << endl;
+    cout << "0. Volver" << endl;
+    cout << "Opción: ";
+
+    int op;
+    cin >> op;
+
+    if (op == 1) {
+        string destino, texto;
+        cout << "Nombre del amigo: ";
+        cin >> destino;
+        cout << "Mensaje (hasta 512 caracteres): ";
+        cin.ignore();
+        getline(cin, texto);
+
+        if (red.enviarMensaje(usuario->getUsername(), destino, texto)) {
+            cout << "Mensaje enviado exitosamente." << endl;
+        } else {
+            cout << "No se pudo enviar el mensaje. Verifique si el usuario existe." << endl;
+        }
+    } else if (op == 2) {
+        cout << "\n--- MENSAJES RECIBIDOS ---" << endl;
+        if (usuario->obtenerCantidadMensajesRecibidos() == 0) {
+            cout << "No tienes mensajes nuevos." << endl;
+        } else {
+            for (int i = 0; i < usuario->obtenerCantidadMensajesRecibidos(); ++i) {
+                Mensaje& m = usuario->obtenerMensajeRecibido(i);
+                cout << m << " [Estado: " << (m.isLeido() ? "Leído" : "NUEVO") << "]" << endl;
+                usuario->marcarMensajeLeido(i);
+            }
+        }
+    } else if (op == 3) {
+        string fInicio, fFin;
+        cout << "Ingrese fecha inicio (YYYY-MM-DD): ";
+        cin >> fInicio;
+        cout << "Ingrese fecha fin (YYYY-MM-DD): ";
+        cin >> fFin;
+
+        cout << "\nBuscando mensajes entre " << fInicio << " y " << fFin << "..." << endl;
+        for (int i = 0; i < usuario->obtenerCantidadMensajesRecibidos(); ++i) {
+            Mensaje& m = usuario->obtenerMensajeRecibido(i);
+            if (m.getFechaEnvio() >= fInicio && m.getFechaEnvio() <= fFin) {
+                cout << m << endl;
+            }
+        }
+    }
+    red.mostrarRecursos();
 }

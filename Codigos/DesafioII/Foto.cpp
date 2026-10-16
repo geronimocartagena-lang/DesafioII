@@ -1,77 +1,63 @@
 #include "Foto.h"
 
-Foto::Foto()
-{
+using namespace std;
+
+Foto::Foto() {
     fechaCaptura = "";
     tamanoBytes = 0;
     rutaArchivo = "";
     conteoLikes = 0;
 }
 
-Foto::Foto(const Foto& otra)
-{
-    fechaCaptura = otra.fechaCaptura;
-    tamanoBytes = otra.tamanoBytes;
-    rutaArchivo = otra.rutaArchivo;
-    conteoLikes = otra.conteoLikes;
+Foto::Foto(const Foto& otra) {
+    this->fechaCaptura = otra.fechaCaptura;
+    this->tamanoBytes = otra.tamanoBytes;
+    this->rutaArchivo = otra.rutaArchivo;
+    this->conteoLikes = otra.conteoLikes;
 }
 
-Foto::Foto(string fecha, unsigned int tamano, string ruta)
-{
-    fechaCaptura = fecha;
-    tamanoBytes = tamano;
-    rutaArchivo = ruta;
-    conteoLikes = 0;
+Foto::Foto(const string& fecha, unsigned int tam, const string& ruta) {
+    this->fechaCaptura = fecha;
+    this->tamanoBytes = tam;
+    this->rutaArchivo = ruta;
+    this->conteoLikes = 0;
 }
 
-Foto::~Foto()
-{
+Foto::~Foto() {
 }
 
-void Foto::darLike()
-{
-    conteoLikes++;
-}
-
-void Foto::quitarLike()
-{
-    if (conteoLikes > 0)
-    {
-        conteoLikes--;
-    }
-}
-
-string Foto::getRutaArchivo() const
-{
-    return rutaArchivo;
-}
-
-string Foto::getFechaCaptura() const
-{
+string Foto::getFechaCaptura() const {
     return fechaCaptura;
 }
 
-unsigned int Foto::getTamanoBytes() const
-{
+void Foto::setFechaCaptura(const string& fecha) {
+    this->fechaCaptura = fecha;
+}
+
+unsigned int Foto::getTamanoBytes() const {
     return tamanoBytes;
 }
 
-int Foto::getConteoLikes() const
-{
+void Foto::setTamanoBytes(unsigned int tam) {
+    this->tamanoBytes = tam;
+}
+
+string Foto::getRutaArchivo() const {
+    return rutaArchivo;
+}
+
+void Foto::setRutaArchivo(const string& ruta) {
+    this->rutaArchivo = ruta;
+}
+
+int Foto::getConteoLikes() const {
     return conteoLikes;
 }
 
-void Foto::setFechaCaptura(string fecha)
-{
-    fechaCaptura = fecha;
+void Foto::darLike() {
+    conteoLikes++;
 }
 
-void Foto::setTamanoBytes(unsigned int tamano)
-{
-    tamanoBytes = tamano;
-}
-
-void Foto::setRutaArchivo(string ruta)
-{
-    rutaArchivo = ruta;
+void Foto::quitarLike() {
+    if (conteoLikes > 0) conteoLikes--;
 }

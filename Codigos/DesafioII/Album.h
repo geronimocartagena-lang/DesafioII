@@ -5,40 +5,35 @@
 #include "Lista.h"
 #include "Foto.h"
 
-using namespace std;
-
-class Album
-{
+class Album {
 private:
-    string nombre;
-    string rutaAlmacenamiento;
-    string privacidad;
+    std::string nombre;
+    std::string rutaAlmacenamiento;
+    std::string privacidad;
     Lista<Foto> fotos;
     int indiceFotoActual;
 
 public:
     Album();
     Album(const Album& otro);
-    Album(string nombre, string ruta, string privacidad);
-
+    Album(const std::string& nom, const std::string& ruta, const std::string& priv);
     ~Album();
 
-    void agregarComoLeido(const Foto& foto);
+    std::string getNombre() const;
+    void setNombre(const std::string& nom);
+
+    std::string getRutaAlmacenamiento() const;
+    void setRutaAlmacenamiento(const std::string& ruta);
+
+    std::string getPrivacidad() const;
+    void setPrivacidad(const std::string& priv);
+
     void agregarFoto(const Foto& foto);
-
-    Foto obtenerFotoSiguiente();
-    Foto obtenerFotoAnterior();
-
     int obtenerCantidadFotos() const;
-    Foto obtenerFoto(int indice) const;
+    Foto& obtenerFoto(int index);
 
-    string getNombre() const;
-    string getRutaAlmacenamiento() const;
-    string getPrivacidad() const;
-
-    void setNombre(string nombre);
-    void setRutaAlmacenamiento(string ruta);
-    void setPrivacidad(string privacidad);
+    Foto& obtenerFotoSiguiente();
+    Foto& obtenerFotoAnterior();
 };
 
-#endif
+#endif // ALBUM_H

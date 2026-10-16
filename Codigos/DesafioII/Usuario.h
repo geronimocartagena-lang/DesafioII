@@ -3,83 +3,60 @@
 
 #include <string>
 #include "Lista.h"
-#include "Mensaje.h"
 #include "Album.h"
+#include "Mensaje.h"
 
-using namespace std;
-
-class Usuario
-{
+class Usuario {
 private:
-    string username;
-    string fechaNacimiento;
-    string email;
-    string fotoPerfilRuta;
-    string contrasena;
-    string ciudad;
-    string pais;
-    string fechaInscripcion;
+    std::string username;
+    std::string contrasena;
+    std::string fotoPerfilRuta;
+    std::string fechaNacimiento;
+    std::string email;
+    std::string ciudad;
+    std::string pais;
+    std::string fechaInscripcion;
 
-    Lista<string> solicitudesPendientes;
-    Lista<string> amigos;
+    Lista<std::string> solicitudesPendientes;
+    Lista<std::string> amigos;
     Lista<Mensaje> mensajesEnviados;
     Lista<Mensaje> mensajesRecibidos;
     Lista<Album> albumes;
 
 public:
     Usuario();
-    Usuario(string username, string contrasena);
-    Usuario(const Usuario& otro);
+    Usuario(const std::string& user, const std::string& pass);
+    Usuario(const std::string& user, const std::string& pass, const std::string& foto);
+    Usuario(const std::string& user, const std::string& fnac, const std::string& mail,
+            const std::string& foto, const std::string& pass, const std::string& ciu,
+            const std::string& pa, const std::string& finsc);
 
-    ~Usuario();
+    std::string getUsername() const;
+    std::string getContrasena() const;
+    std::string getFotoPerfilRuta() const;
 
-    string getUsername() const;
-    string getFechaNacimiento() const;
-    string getEmail() const;
-    string getFotoPerfilRuta() const;
-    string getCiudad() const;
-    string getPais() const;
-    string getFechaInscripcion() const;
+    void setContrasena(const std::string& pass);
+    void setFotoPerfilRuta(const std::string& foto);
 
-    void setFechaNacimiento(string fecha);
-    void setEmail(string email);
-    void setFotoPerfilRuta(string ruta);
-    void setCiudad(string ciudad);
-    void setPais(string pais);
-    void setFechaInscripcion(string fecha);
-
-    bool verificarContrasena(string contrasena) const;
-
-    bool enviarSolicitud(string destinatario);
-    bool aceptarSolicitud(string remitente);
-
-    bool agregarAmigo(string username);
-    bool esAmigo(string username) const;
-    bool tieneSolicitud(string username) const;
-
-    void agregarMensajeEnviado(const Mensaje& mensaje);
-    void agregarMensajeRecibido(const Mensaje& mensaje);
-
-    void agregarAlbum(const Album& album);
-
-    int obtenerCantidadAmigos() const;
-    string obtenerAmigo(int indice) const;
-
+    // Métodos requeridos por main.cpp
+    void agregarSolicitud(const std::string& remitente);
     int obtenerCantidadSolicitudes() const;
-    string obtenerSolicitud(int indice) const;
+    std::string obtenerSolicitud(int index);
+    void eliminarSolicitud(int index);
 
+    void agregarAmigo(const std::string& amigo);
+    int obtenerCantidadAmigos() const;
+    std::string obtenerAmigo(int index) const;
+    bool esAmigo(const std::string& nombre) const;
+
+    void recibirMensaje(const Mensaje& msg);
     int obtenerCantidadMensajesRecibidos() const;
-    Mensaje obtenerMensajeRecibido(int indice) const;
-    void marcarMensajeLeido(int indice);
+    Mensaje& obtenerMensajeRecibido(int index);
+    void marcarMensajeLeido(int index);
 
+    void agregarAlbum(const Album& alb);
     int obtenerCantidadAlbumes() const;
-    Album obtenerAlbum(int indice) const;
-
-    Lista<string>& obtenerListaAmigos();
-    Lista<Mensaje>& obtenerMensajesRecibidos();
-    Lista<Album>& obtenerAlbumes();
-
-    void setContrasena(string contrasena);
+    Album& obtenerAlbum(int index);
 };
 
-#endif
+#endif // USUARIO_H

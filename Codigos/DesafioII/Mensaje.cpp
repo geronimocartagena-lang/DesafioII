@@ -1,101 +1,96 @@
 #include "Mensaje.h"
-#include <ctime>
 
-Mensaje::Mensaje()
-{
+using namespace std;
+
+Mensaje::Mensaje() {
     emisor = "";
     receptor = "";
     textoContenido = "";
-    fechaEnvio = "";
+    fechaEnvio = "2026-10-12";
     leido = false;
 }
 
-Mensaje::Mensaje(string emisor, string receptor, string texto)
-{
-    this->emisor = emisor;
-    this->receptor = receptor;
-    textoContenido = texto;
-    leido = false;
-
-    time_t ahora = time(nullptr);
-    tm* fecha = localtime(&ahora);
-
-    if (fecha != nullptr)
-    {
-        char buffer[20];
-        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", fecha);
-        fechaEnvio = buffer;
-    }
+Mensaje::Mensaje(const Mensaje& otro) {
+    this->emisor = otro.emisor;
+    this->receptor = otro.receptor;
+    this->textoContenido = otro.textoContenido;
+    this->fechaEnvio = otro.fechaEnvio;
+    this->leido = otro.leido;
 }
 
-Mensaje::Mensaje(const Mensaje& otro)
-{
-    emisor = otro.emisor;
-    receptor = otro.receptor;
-    textoContenido = otro.textoContenido;
-    fechaEnvio = otro.fechaEnvio;
-    leido = otro.leido;
+Mensaje::Mensaje(const string& em, const string& rec, const string& txt) {
+    this->emisor = em;
+    this->receptor = rec;
+    this->textoContenido = txt;
+    this->fechaEnvio = "2026-10-12";
+    this->leido = false;
 }
 
-Mensaje::~Mensaje()
-{
+Mensaje::Mensaje(const string& em, const string& rec, const string& txt, const string& fecha) {
+    this->emisor = em;
+    this->receptor = rec;
+    this->textoContenido = txt;
+    this->fechaEnvio = fecha;
+    this->leido = false;
 }
 
-void Mensaje::marcarComoLeido()
-{
-    leido = true;
+Mensaje::~Mensaje() {
 }
 
-string Mensaje::getEmisor() const
-{
+string Mensaje::getEmisor() const {
     return emisor;
 }
 
-string Mensaje::getReceptor() const
-{
+void Mensaje::setEmisor(const string& em) {
+    this->emisor = em;
+}
+
+string Mensaje::getReceptor() const {
     return receptor;
 }
 
-string Mensaje::getTextoContenido() const
-{
+void Mensaje::setReceptor(const string& rec) {
+    this->receptor = rec;
+}
+
+string Mensaje::getTextoContenido() const {
     return textoContenido;
 }
 
-string Mensaje::getFechaEnvio() const
-{
+void Mensaje::setTextoContenido(const string& txt) {
+    this->textoContenido = txt;
+}
+
+string Mensaje::getFechaEnvio() const {
     return fechaEnvio;
 }
 
-bool Mensaje::getLeido() const
-{
+void Mensaje::setFechaEnvio(const string& fecha) {
+    this->fechaEnvio = fecha;
+}
+
+bool Mensaje::getLeido() const {
     return leido;
 }
 
-void Mensaje::setFechaEnvio(string fecha)
-{
-    fechaEnvio = fecha;
+bool Mensaje::isLeido() const {
+    return leido;
 }
 
-bool Mensaje::operator==(const Mensaje& otro) const
-{
-    return emisor == otro.emisor &&
-           receptor == otro.receptor &&
-           fechaEnvio == otro.fechaEnvio &&
-           textoContenido == otro.textoContenido;
+void Mensaje::marcarComoLeido() {
+    this->leido = true;
 }
 
-bool Mensaje::operator<(const Mensaje& otro) const
-{
+bool Mensaje::operator==(const Mensaje& otro) const {
+    return (emisor == otro.emisor && receptor == otro.receptor &&
+            textoContenido == otro.textoContenido && fechaEnvio == otro.fechaEnvio);
+}
+
+bool Mensaje::operator<(const Mensaje& otro) const {
     return fechaEnvio < otro.fechaEnvio;
 }
 
-ostream& operator<<(ostream& os, const Mensaje& mensaje)
-{
-    os << "De: " << mensaje.emisor << '\n';
-    os << "Para: " << mensaje.receptor << '\n';
-    os << "Fecha: " << mensaje.fechaEnvio << '\n';
-    os << "Mensaje: " << mensaje.textoContenido << '\n';
-    os << "Estado: " << (mensaje.leido ? "Leido" : "No leido");
-
+ostream& operator<<(ostream& os, const Mensaje& m) {
+    os << "[" << m.fechaEnvio << "] De: " << m.emisor << " Para: " << m.receptor << " - " << m.textoContenido;
     return os;
 }

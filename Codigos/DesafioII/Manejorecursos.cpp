@@ -1,44 +1,38 @@
 #include "Manejorecursos.h"
 
-Manejorecursos::Manejorecursos()
-{
+Manejorecursos::Manejorecursos() {
     memoriaConsumidaBytes = 0;
     contadorIteraciones = 0;
 }
 
-void Manejorecursos::registrarAsignacion(size_t bytes)
-{
+Manejorecursos::~Manejorecursos() {
+}
+
+void Manejorecursos::registrarAsignacion(std::size_t bytes) {
     memoriaConsumidaBytes += bytes;
 }
 
-void Manejorecursos::registrarLiberacion(size_t bytes)
-{
-    if (bytes <= memoriaConsumidaBytes)
-    {
+void Manejorecursos::registrarLiberacion(std::size_t bytes) {
+    if (memoriaConsumidaBytes >= bytes) {
         memoriaConsumidaBytes -= bytes;
-    }
-    else
-    {
+    } else {
         memoriaConsumidaBytes = 0;
     }
 }
 
-void Manejorecursos::incrementarIteracion(unsigned long long num)
-{
+void Manejorecursos::incrementarIteracion(int num) {
     contadorIteraciones += num;
 }
 
-size_t Manejorecursos::obtenerMemoriaConsumida() const
-{
+std::size_t Manejorecursos::obtenerMemoriaConsumida() const {
     return memoriaConsumidaBytes;
 }
 
-unsigned long long Manejorecursos::obtenerIteraciones() const
-{
+unsigned long long Manejorecursos::obtenerIteraciones() const {
     return contadorIteraciones;
 }
 
-void Manejorecursos::reiniciarContadores()
-{
+void Manejorecursos::reiniciarContadores() {
+    memoriaConsumidaBytes = 0;
     contadorIteraciones = 0;
 }

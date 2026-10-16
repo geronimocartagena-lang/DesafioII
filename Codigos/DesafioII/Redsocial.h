@@ -2,43 +2,45 @@
 #define REDSOCIAL_H
 
 #include <string>
-#include "Lista.h"
 #include "Usuario.h"
+#include "Lista.h"
+#include "Album.h"
+#include "Foto.h"
 #include "Manejorecursos.h"
 
-using namespace std;
-
-class Redsocial
-{
+class Redsocial {
 private:
     Lista<Usuario> usuarios;
-    string rutaAlmacenamiento;
+    int** matrizAdyacencia;
     int capacidadUsuarios;
-    Manejorecursos recursos;
+    Usuario* usuarioAutenticado;
+    Manejorecursos monitor;
 
-    int buscarUsuario(string username) const;
+    int buscarIndiceUsuario(const std::string& username);
 
 public:
     Redsocial();
     ~Redsocial();
 
+    void agregarUsuario(const Usuario& u);
+    Usuario* buscarUsuarioPorNombre(const std::string& nombre);
+
     bool cargarDatosAlmacenamiento();
     bool guardarDatosAlmacenamiento();
 
-    Usuario* autenticarUsuario(string usuario, string password);
+    Usuario* autenticarUsuario(const std::string& username, const std::string& pass);
+    void cerrarSesion();
+    Usuario* getUsuarioAutenticado();
 
-    Lista<Usuario> obtenerSugerenciasAmigos(Usuario& usuario);
-    Lista<Usuario> obtenerMejoresAmigos(Usuario& usuario);
+    bool enviarSolicitudAmistad(const std::string& origen, const std::string& destino);
+    bool aceptarSolicitudAmistad(const std::string& destinatario, const std::string& remitente);
+    bool enviarMensaje(const std::string& emisor, const std::string& receptor, const std::string& texto);
 
-    bool agregarUsuario(const Usuario& usuario);
-    bool enviarSolicitudAmistad(string origen, string destino);
-    bool aceptarSolicitudAmistad(string destinatario, string remitente);
-    bool enviarMensaje(string emisor, string receptor, string texto);
+    void mostrarMejoresAmigos();
+    void verSugerenciasAmigos(int K);
+    void mostrarRecursos();
 
-    Usuario* buscarUsuarioPorNombre(string username);
-
-    void mostrarRecursos() const;
-    Manejorecursos& obtenerManejadorRecursos();
+    Manejorecursos& getMonitor();
 };
 
-#endif
+#endif // REDSOCIAL_H

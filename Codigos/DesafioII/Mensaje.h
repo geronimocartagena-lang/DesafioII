@@ -4,38 +4,42 @@
 #include <string>
 #include <iostream>
 
-using namespace std;
-
-class Mensaje
-{
+class Mensaje {
 private:
-    string emisor;
-    string receptor;
-    string textoContenido;
-    string fechaEnvio;
+    std::string emisor;
+    std::string receptor;
+    std::string textoContenido;
+    std::string fechaEnvio;
     bool leido;
 
 public:
     Mensaje();
-    Mensaje(string emisor, string receptor, string texto);
     Mensaje(const Mensaje& otro);
-
+    Mensaje(const std::string& em, const std::string& rec, const std::string& txt);
+    Mensaje(const std::string& em, const std::string& rec, const std::string& txt, const std::string& fecha);
     ~Mensaje();
 
+    std::string getEmisor() const;
+    void setEmisor(const std::string& em);
+
+    std::string getReceptor() const;
+    void setReceptor(const std::string& rec);
+
+    std::string getTextoContenido() const;
+    void setTextoContenido(const std::string& txt);
+
+    std::string getFechaEnvio() const;
+    void setFechaEnvio(const std::string& fecha);
+
+    bool getLeido() const;
+    bool isLeido() const;
     void marcarComoLeido();
 
-    string getEmisor() const;
-    string getReceptor() const;
-    string getTextoContenido() const;
-    string getFechaEnvio() const;
-    bool getLeido() const;
-
-    void setFechaEnvio(string fecha);
-
+    // Sobrecarga de operadores
     bool operator==(const Mensaje& otro) const;
     bool operator<(const Mensaje& otro) const;
 
-    friend ostream& operator<<(ostream& os, const Mensaje& mensaje);
+    friend std::ostream& operator<<(std::ostream& os, const Mensaje& m);
 };
 
-#endif
+#endif // MENSAJE_H
